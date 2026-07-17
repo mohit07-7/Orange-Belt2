@@ -1,23 +1,29 @@
 [workspace]
+# Use the latest dependency resolver
 resolver = "2"
+
+# Workspace members
 members = [
-  "contracts/*",
+    "contracts/*",
 ]
 
 [workspace.dependencies]
+# Shared Soroban SDK version across all contracts
 soroban-sdk = "25"
 
+# Optimized release build for Soroban smart contracts
 [profile.release]
-opt-level = "z"
-overflow-checks = true
+opt-level = "z"          # Optimize for binary size
+overflow-checks = true   # Keep arithmetic overflow checks enabled
 debug = 0
-strip = "symbols"
+strip = "symbols"        # Remove debug symbols
 debug-assertions = false
 panic = "abort"
 codegen-units = 1
-lto = true
+lto = true               # Enable Link Time Optimization
 
-# For more information about this profile see https://soroban.stellar.org/docs/basic-tutorials/logging#cargotoml-profile
+# Development release profile with logging support
+# Useful while debugging contracts
 [profile.release-with-logs]
 inherits = "release"
 debug-assertions = true
