@@ -1298,5 +1298,4 @@ MIT © Zenith Auction Protocol
 **Built on [Stellar](https://stellar.org) • Powered by [Soroban](https://soroban.stellar.org) • Designed for the future of Real World Assets**
 
 </div>
-#   B e l t - 3  
- 
+#
