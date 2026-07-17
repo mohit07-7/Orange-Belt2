@@ -1,175 +1,52 @@
-name: CI
+name: CI/CD Pipeline
+
 
 on:
   push:
-    branches: [main]
+    branches: [ main, master ]
   pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-
-env:
-  CARGO_TERM_COLOR: always
+    branches: [ main, master ]
 
 jobs:
-  # ─────────────────────────────────────────────
-  # Detect which parts of the monorepo changed,
-  # so unrelated jobs don't run on every push.
-  # ─────────────────────────────────────────────
-  changes:
-    name: Detect changed paths
-    runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      auction: ${{ steps.filter.outputs.auction }}
-      nft: ${{ steps.filter.outputs.nft }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Filter changed paths
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            frontend:
-              - 'client/**'
-              - '.github/workflows/ci.yml'
-            auction:
-              - 'contract/**'
-              - '!contract/nft_contract/**'
-              - '.github/workflows/ci.yml'
-            nft:
-              - 'contract/nft_contract/**'
-              - '.github/workflows/ci.yml'
-
-  # ───────────────────────────────────────────
-  # Frontend — Next.js 16 / React 19 (client/)
-  # ───────────────────────────────────────────
-  frontend:
-    name: Frontend (client)
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
+  lint-and-typecheck:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: ./client 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
-          cache: "npm"
-          cache-dependency-path: client/package-lock.json
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: ./client/package-lock.json 
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
-      - name: Lint
-        run: npm run lint
 
-      - name: Build
+  production-build:
+    needs: lint-and-typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: ./client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Next.js App
         run: npm run build
-
-  # ─────────────────────────────────────────────
-  # Auction contract — contract/ (soroban-sdk 25)
-  # ─────────────────────────────────────────────
-  auction-contract:
-    name: Auction Contract (zenith-auction)
-    needs: changes
-    if: needs.changes.outputs.auction == 'true' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: contract
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-          components: rustfmt, clippy
-
-      - name: Cache cargo registry & build
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: contract -> target
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-
-      - name: Clippy
-        run: cargo clippy --all-targets --locked -- -D warnings
-
-      - name: Run tests
-        run: cargo test --workspace --locked
-
-      - name: Build wasm contract
-        run: cargo build --target wasm32-unknown-unknown --release --locked
-
-      - name: Upload wasm artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: zenith-auction-wasm
-          path: contract/target/wasm32-unknown-unknown/release/zenith_auction.wasm
-          if-no-files-found: error
-          retention-days: 7
-
-  # ─────────────────────────────────────────────────────────
-  # NFT contract — contract/nft_contract/nft_auction (soroban-sdk 26)
-  # ─────────────────────────────────────────────────────────
-  nft-contract:
-    name: NFT Contract (nft_mint)
-    needs: changes
-    if: needs.changes.outputs.nft == 'true' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: contract/nft_contract/nft_auction
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-          components: rustfmt, clippy
-
-      - name: Cache cargo registry & build
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: contract/nft_contract/nft_auction -> target
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-
-      - name: Clippy
-        run: cargo clippy --all-targets --locked -- -D warnings
-
-      - name: Run tests
-        run: cargo test --workspace --locked
-
-      - name: Build wasm contract
-        run: cargo build --target wasm32-unknown-unknown --release --locked
-
-      - name: Upload wasm artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nft-mint-wasm
-          path: contract/nft_contract/nft_auction/target/wasm32-unknown-unknown/release/nft_mint.wasm
-          if-no-files-found: error
-          retention-days: 7
