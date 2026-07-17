@@ -446,9 +446,6 @@ graph TB
 
 <p align="center">
   <img width="1511" height="735" alt="Screenshot 2026-06-28 182707" src="https://github.com/user-attachments/assets/9e74c82c-9bad-4589-bf5c-7073df2ade33" />
-<img width="1880" height="931" alt="Screenshot 2026-06-28 182528" src="https://github.com/user-attachments/assets/e47da9c4-a081-4de0-ab78-502f41a72a22" />
-<img width="1877" height="687" alt="image" src="https://github.com/user-attachments/assets/0bd5e614-bce4-48da-98dc-ede991897feb" />
-
 
 </p>
 
