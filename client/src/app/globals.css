@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+/* ── Neo-Brutalist Dark Design System ──────────────────────────── */
+:root {
+  --bg: #0a0a0f;
+  --bg-elevated: #111118;
+  --bg-card: #0e0e16;
+  --border: #1e1e2e;
+  --border-hard: #2a2a3a;
+  --text: #e8e8f0;
+  --text-dim: #6b6b80;
+  --text-muted: #44445a;
+  --accent: #3b82f6;
+  --accent-bright: #60a5fa;
+  --accent-dim: #1e40af;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #eab308;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-mono: "JetBrains Mono", "Geist Mono", "Fira Code", ui-monospace, monospace;
+  --font-sans: "Inter", "Geist", system-ui, -apple-system, sans-serif;
+}
+
+/* ── Global Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Selection ────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── All inputs are brutalist ─────────────────────────────────── */
+input, textarea, select, button {
+  border-radius: 0 !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent) !important;
+  outline: none !important;
+  box-shadow: 4px 4px 0px 0px var(--accent) !important;
+}
+
+/* ── Native select option dark mode ───────────────────────── */
+option {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+/* ── Datetime-local picker dark mode ───────────────────────── */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.7);
+}
+
+/* ── File input dark mode ──────────────────────────────────── */
+input[type="file"]::file-selector-button {
+  background: var(--accent);
+  color: #fff;
+  border: 2px solid var(--accent);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: var(--accent-bright);
+}
+
+/* ── Brutalist Card ───────────────────────────────────────────── */
+.brutal {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  transition: all 0.15s ease;
+}
+
+.brutal:hover {
+  border-color: var(--accent);
+  box-shadow: 6px 6px 0px 0px var(--accent);
+  transform: translate(-2px, -2px);
+}
+
+.brutal-static {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+}
+
+/* ── Offset Shadow Utilities ──────────────────────────────────── */
+.shadow-brutal {
+  box-shadow: 4px 4px 0px 0px var(--border-hard);
+}
+
+.shadow-brutal-sm {
+  box-shadow: 3px 3px 0px 0px var(--border-hard);
+}
+
+.shadow-brutal-accent {
+  box-shadow: 4px 4px 0px 0px var(--accent);
+}
+
+.shadow-brutal-accent-lg {
+  box-shadow: 6px 6px 0px 0px var(--accent);
+}
+
+/* ── Scanline overlay ─────────────────────────────────────────── */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+
+/* ── Grid Background ──────────────────────────────────────────── */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── Animations ───────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-left {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-up { animation: fade-up 0.5s ease forwards; }
+.animate-fade-up-1 { animation: fade-up 0.5s ease 0.1s forwards; opacity: 0; }
+.animate-fade-up-2 { animation: fade-up 0.5s ease 0.2s forwards; opacity: 0; }
+.animate-fade-up-3 { animation: fade-up 0.5s ease 0.3s forwards; opacity: 0; }
+.animate-fade-up-4 { animation: fade-up 0.5s ease 0.4s forwards; opacity: 0; }
+
+/* ── Live Indicator ───────────────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  animation: blink 1.5s step-end infinite;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-hard); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Bid Flash ─────────────────────────────────────────────── */
+@keyframes bid-flash {
+  0% { background-color: rgba(59, 130, 246, 0.3); }
+  100% { background-color: transparent; }
+}
+.animate-bid-flash { animation: bid-flash 1.2s ease-out forwards; }
+
+/* ── Number Pop ────────────────────────────────────────────── */
+@keyframes number-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.animate-number-pop { animation: number-pop 0.4s ease-out; }
+
+/* ── Pulse Ring ────────────────────────────────────────────── */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+.animate-pulse-ring { animation: pulse-ring 2s ease infinite; }
+
+/* ── Slide In From Right ───────────────────────────────────── */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right { animation: slide-in-right 0.3s ease forwards; }
+
+/* ── Progress Bar Shimmer ──────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 50%, var(--accent) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ── Urgency Glow ──────────────────────────────────────────── */
+@keyframes urgency-glow {
+  0%, 100% { text-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+  50% { text-shadow: 0 0 16px rgba(239, 68, 68, 0.8); }
+}
+.animate-urgency { animation: urgency-glow 1s ease-in-out infinite; }
+
+
