@@ -15,6 +15,7 @@
 ![IPFS](https://img.shields.io/badge/IPFS-Pinata_Storage-65CFF0?style=flat-square&logo=ipfs)
 ![Zustand](https://img.shields.io/badge/Zustand_State-2c2c2c?style=flat-square)
 
+[![CI](https://github.com/mohit07-7/Orange-Belt2/actions/workflows/ci.yml/badge.svg)](https://github.com/mohit07-7/Orange-Belt2/actions/workflows/ci.yml)
 ---
 
 </div>
